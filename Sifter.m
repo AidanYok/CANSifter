@@ -1,22 +1,23 @@
-%% 
+%% Load the dbc and blf files, may take a while depending on
+%the size of the logs
 disp('Loading DBC...')
-%candb = canDatabase("GlobalAHS_GM_Confidential.dbc")
-candb = canDatabase("GlobalAFO_GM_Confidential.dbc");
+candb = canDatabase("DBC FILE GOES HERE");
 disp('... Done')
 disp('Loading .blf File (1/2)...')
-S = blfread('D1F7.blf', 3,'DataBase', candb);
+S = blfread('FIRST BLF FILE GOES HERE', 3,'DataBase', candb);
 disp('... Done')
 disp('loading .blf File (2/2)...')
-V = blfread('D1F1.blf', 3,'DataBase', candb);
-%% 
+V = blfread('SECOND BLF FILE GOES HERE', 3,'DataBase', candb);
+%% store the names of the can messages in each log
 disp('Organising Files...')
 
 x = unique(S.Name);
 y = unique(V.Name);
 
 disp('... Done')
-%% 
-F = struct();
+%% For each message, Find the signals inside of it and add it to a 
+%struct array
+diffSigs = struct();
 
 for i = 1: length(x)
    T = canSignalTimetable(S,x(i));
@@ -25,15 +26,17 @@ for i = 1: length(x)
    
     for j = 1:length(sigNamesOne)
         signalOne = sigNamesOne{j};
-        F.(sigNamesOne{j}) = signalOne;
-        
+        diffSigs.(sigNamesOne{j}) = signalOne;
     end
     
     disp('Log One Messages')
     disp(i / length(x))
 
 end
-%% 
+%% filter through the singal names of the second log file
+%while removing any signals that are found in both and adding any
+%unique ones
+
 for i = 1:length(y)
     U = canSignalTimetable(V,y{i});
     
@@ -41,17 +44,17 @@ for i = 1:length(y)
     
     for j = 1:length(sigNamesTwo)
     signalTwo = sigNamesTwo{j};
-        if ~ismember(signalTwo, fieldnames(F))
-            F.(sigNamesTwo{j}) = signalTwo;
+        if ~ismember(signalTwo, fieldnames(diffSigs))
+            diffSigs.(sigNamesTwo{j}) = signalTwo;
         else
-            F = rmfield(F, signalTwo);
+            diffSigs = rmfield(diffSigs, signalTwo);
         end
 
     end
     disp('Log Two Messages')
     disp( i / length(y));
 end
-%% 
+%% Add only new messages to a new array
 diffMessages = [];
 for i = 1: length(x)
     diffMessages = [diffMessages, x(i)];
@@ -62,7 +65,7 @@ end
 
 for i = 1: length(y)
     if ismember(y(i), diffMessages)
-        diffMessages(ismember(diffMessages, y(i))) = [];
+        diffMessages(ismember(diffMessages, y(i))) = []; %redundant?
     else
         diffMessages = [diffMessages, y(i)];
     end
@@ -74,18 +77,3 @@ end
 disp('Complete')
 
 diffMessages = diffMessages';
-%%
-Z = [];
-for i = 1: length(x)
-    Z = [Z, x(i)];
-end
-
-for i = 1: length(y)
-    if ismember(y(i), Z)
-        Z(ismember(Z, y(i))) = [];
-    else
-        Z = [Z, y(i)];
-    end
-end
-
-Z = Z';
