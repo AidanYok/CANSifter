@@ -8,5 +8,4 @@ The requirements for the script to work are:
 
 Things to do about this:
   -currently the output signals and messsages do not spefiy which log they are missing from
-  -The later variables are poorly named
   -Add UI at somepoint?
