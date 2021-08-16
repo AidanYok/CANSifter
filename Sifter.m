@@ -4,23 +4,24 @@ disp('Loading DBC...')
 candb = canDatabase("DBC FILE GOES HERE");
 disp('... Done')
 disp('Loading .blf File (1/2)...')
-S = blfread('FIRST BLF FILE GOES HERE', 3,'DataBase', candb);
+blfOne = blfread('FIRST BLF FILE GOES HERE', 3,'DataBase', candb);
 disp('... Done')
 disp('loading .blf File (2/2)...')
-V = blfread('SECOND BLF FILE GOES HERE', 3,'DataBase', candb);
+blfTwo = blfread('SECOND BLF FILE GOES HERE', 3,'DataBase', candb);
 %% store the names of the can messages in each log
 disp('Organising Files...')
 
-x = unique(S.Name);
-y = unique(V.Name);
+msgsOne = unique(blfOne.Name);
+msgsTwo = unique(blfTwo.Name);
 
 disp('... Done')
-%% For each message, Find the signals inside of it and add it to a 
+%% FOR FINDING DIFFERING SIGNALS (1/2)
+%For each message, Find the signals inside of it and add it to a 
 %struct array
 diffSigs = struct();
 
-for i = 1: length(x)
-   T = canSignalTimetable(S,x(i));
+for i = 1: length(msgsOne)
+   T = canSignalTimetable(blfOne,msgsOne(i));
    sigNamesOne = fieldnames(T);
 
    
@@ -30,15 +31,16 @@ for i = 1: length(x)
     end
     
     disp('Log One Messages')
-    disp(i / length(x))
+    disp(i / length(msgsOne))
 
 end
-%% filter through the singal names of the second log file
+%% FOR FINDING DIFFERING SIGNALS (2/2)
+% filter through the singal names of the second log file
 %while removing any signals that are found in both and adding any
 %unique ones
 
-for i = 1:length(y)
-    U = canSignalTimetable(V,y{i});
+for i = 1:length(msgsTwo)
+    U = canSignalTimetable(blfTwo,msgsTwo{i});
     
     sigNamesTwo = fieldnames(U);
     
@@ -52,28 +54,32 @@ for i = 1:length(y)
 
     end
     disp('Log Two Messages')
-    disp( i / length(y));
-end
-%% Add only new messages to a new array
-diffMessages = [];
-for i = 1: length(x)
-    diffMessages = [diffMessages, x(i)];
-    
-    disp('Filtering Different Messages (1/2)')
-    disp(i / length(x))
+    disp( i / length(msgsTwo));
 end
 
-for i = 1: length(y)
-    if ismember(y(i), diffMessages)
-        diffMessages(ismember(diffMessages, y(i))) = []; %redundant?
+disp('Differing Singals Complete')
+%%
+%%FOR FINDING DIFFERING MESSAGES
+% Add only new messages to a new array
+diffMessages = [];
+for i = 1: length(msgsOne)
+    diffMessages = [diffMessages, msgsOne(i)];
+    
+    disp('Filtering Different Messages (1/2)')
+    disp(i / length(msgsOne))
+end
+
+for i = 1: length(msgsTwo)
+    if ismember(msgsTwo(i), diffMessages)
+        diffMessages(ismember(diffMessages, msgsTwo(i))) = [];
     else
-        diffMessages = [diffMessages, y(i)];
+        diffMessages = [diffMessages, msgsTwo(i)];
     end
     
     disp('Filtering Different Messages (2/2)')
-    disp(i / length(y))
+    disp(i / length(msgsTwo))
 end
 
-disp('Complete')
-
 diffMessages = diffMessages';
+
+disp('Differing Messages Complete')
