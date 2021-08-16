@@ -9,3 +9,6 @@ The requirements for the script to work are:
 Things to do about this:
   -currently the output signals and messsages do not spefiy which log they are missing from
   -Add UI at somepoint?
+  -Add a function to sift through to find signals that have differing values at a specified period 
+  of time. This would greatly help with vehicle debugging. Make sure to exclude Checksums
+  and protection values in most cases
