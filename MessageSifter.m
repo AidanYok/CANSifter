@@ -1,8 +1,8 @@
 dbc = {'GlobalALS_GM_Confidential.dbc', 'GlobalAHS_GM_Confidential.dbc', ...
  'GlobalAFO_GM_Confidential.dbc', 'GlobalACE_GM_Confidential.dbc'};
 
-logOne = 'D1F7.blf';
-logTwo = 'recent.blf';
+logOne = 'motSpin.blf';
+logTwo = 'motNoSpin.blf';
 
 diffMessages = begin(dbc, logOne, logTwo);
 
@@ -21,20 +21,20 @@ function diffMessages = begin(dbc, logOne, logTwo)
         % Load the dbc and blf files, may take a while depending on
         %the size of the logs
         disp('Loading DBC...')
-        disp(['Overall Progress: ' num2str((can / 4) * 11) '%'])  
+        disp(['Overall Progress: ' num2str((can / 4) * 100) '%'])  
         candb = canDatabase(char(dbc));
         disp('... Done')    
         disp('Loading .blf File (1/2)...')
-        disp(['Overall Progress: ' num2str((can / 4) * 11) '%'])  
+        disp(['Overall Progress: ' num2str((can / 4) * 100) '%'])  
         blfOne = blfread(logOne', can,'DataBase', candb);
         disp('... Done')
         disp('loading .blf File (2/2)...')
-        disp(['Overall Progress: ' num2str((can / 4) * 11) '%'])  
+        disp(['Overall Progress: ' num2str((can / 4) * 100) '%'])  
         blfTwo = blfread(logTwo, can,'DataBase', candb);
 
         % store the names of the can messages in each log
         disp('Organising Files...')
-        disp(['Overall Progress: ' num2str((can / 4) * 11) '%'])  
+        disp(['Overall Progress: ' num2str((can / 4) * 100) '%'])  
 
         msgsOne = unique(blfOne.Name);
         msgsTwo = unique(blfTwo.Name);
@@ -50,7 +50,7 @@ function diffMessages = begin(dbc, logOne, logTwo)
             diffMessagesOne = [diffMessagesOne, msgsOne(i)];
     
             disp('Filtering Different Messages (1/2)')
-            disp(['Overall Progress: ' num2str((can / 4) * 11) '%'])  
+            disp(['Overall Progress: ' num2str((can / 4) * 100) '%'])  
             disp(i / length(msgsOne))
         end
 
@@ -62,7 +62,7 @@ function diffMessages = begin(dbc, logOne, logTwo)
             end
 
             disp('Filtering Different Messages (2/2)')
-            disp(['Overall Progress: ' num2str((can / 4) * 11) '%'])  
+            disp(['Overall Progress: ' num2str((can / 4) * 100) '%'])  
             disp(i / length(msgsTwo))
         end
 
@@ -70,7 +70,7 @@ function diffMessages = begin(dbc, logOne, logTwo)
         diffTwo = diffMessagesTwo';
 
         disp('Differing Messages Complete')
-        disp(['Overall Progress: ' num2str((can / 4) * 11) '%'])  
+        disp(['Overall Progress: ' num2str((can / 4) * 100) '%'])  
     end
 
 end
